@@ -22,8 +22,8 @@ pipeline {
                         sonar-scanner.bat ^
                         -D"sonar.projectKey=controle_3" ^
                         -D"sonar.sources=C:\\Users\\user\\Desktop\\controle 3" ^
-                        -D"sonar.host.url=http://<http://localhost:9000>" ^
-                        -D"sonar.login=<sqa_94fed0bfc2252a6f29e598e4a2836afb0243128f>"
+                        -D"sonar.host.url=http://localhost:9000" ^
+                        -D"sonar.login=sqa_94fed0bfc2252a6f29e598e4a2836afb0243128f"
                         '''
                     }
                 }
