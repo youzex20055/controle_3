@@ -3,42 +3,40 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'PHP project detected - skipping build step as no compilation is needed.'
+                echo 'Build de l’application...'
             }
         }
-
-        stage('Test Unitaires') {
+        stage('Tests Unitaires') {
+            steps {
+                // Utilisation de PHP pour exécuter les tests
+                bat 'php tests\\testIndex.php'
+            }
+        }
+        stage('Analyse SonarQube') {
             steps {
                 script {
-                    if (fileExists('vendor\\bin\\phpunit')) {
-                        bat 'php vendor\\bin\\phpunit'
-                    } else {
-                        echo 'PHPUnit not found. Skipping test step.'
+                    withSonarQubeEnv('SonarQube') {
+                        // Commande sonar-scanner sous Windows
+                        bat 'sonar-scanner.bat'
                     }
                 }
             }
         }
-
-        stage('Analyse Qualité de Code') {
+        stage('Déploiement') {
             steps {
-                withSonarQubeEnv('SonarQube') {
-                    bat 'sonar-scanner -Dsonar.projectKey=php_controle_3'
+                script {
+                    bat '''
+                    if not exist C:\\web\\projet-php (
+                        mkdir C:\\web\\projet-php
+                    )
+                    xcopy /E /I .\\* C:\\web\\projet-php
+                    '''
                 }
             }
         }
-
-        stage('Déploiement') {
-            steps {
-                bat '''
-                if not exist C:\\var\\www\\controle3 mkdir C:\\var\\www\\controle3
-                xcopy /E /I /Y . C:\\var\\www\\controle3
-                '''
-            }
-        }
-
         stage('Run') {
             steps {
-                echo 'Application PHP prête et hébergée sur le serveur web.'
+                echo 'Application déployée avec succès!'
             }
         }
     }
