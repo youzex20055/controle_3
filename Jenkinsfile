@@ -8,8 +8,9 @@ pipeline {
         }
         stage('Tests Unitaires') {
             steps {
-                // Utilisation de PHP pour exécuter les tests
-                bat 'php tests\\testIndex.php'
+                script {
+                    bat 'php "C:\\Users\\user\\Desktop\\controle 3\\tests\\testIndex.php"'
+                }
             }
         }
         stage('Analyse SonarQube') {
@@ -17,7 +18,13 @@ pipeline {
                 script {
                     withSonarQubeEnv('SonarQube') {
                         // Commande sonar-scanner sous Windows
-                        bat 'sonar-scanner.bat'
+                        bat '''
+                        sonar-scanner.bat ^
+                        -D"sonar.projectKey=controle_3" ^
+                        -D"sonar.sources=C:\\Users\\user\\Desktop\\controle 3" ^
+                        -D"sonar.host.url=http://<http://localhost:9000>" ^
+                        -D"sonar.login=<sqa_94fed0bfc2252a6f29e598e4a2836afb0243128f>"
+                        '''
                     }
                 }
             }
@@ -26,10 +33,10 @@ pipeline {
             steps {
                 script {
                     bat '''
-                    if not exist C:\\web\\projet-php (
-                        mkdir C:\\web\\projet-php
+                    if not exist "C:\\web\\controle3" (
+                        mkdir "C:\\web\\controle3"
                     )
-                    xcopy /E /I .\\* C:\\web\\projet-php
+                    xcopy /E /I "C:\\Users\\user\\Desktop\\controle 3\\*" "C:\\web\\controle3"
                     '''
                 }
             }
