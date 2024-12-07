@@ -10,16 +10,17 @@ pipeline {
             }
         }
         stage('Test Unitaires') {
-            steps {
-                script {
-                    if (fileExists("${env.PROJECT_DIR}\\vendor\\bin\\phpunit")) {
-                        bat "php ${env.PROJECT_DIR}\\vendor\\bin\\phpunit"
-                    } else {
-                        error "PHPUnit not found. Please ensure it is installed in ${env.PROJECT_DIR}\\vendor\\bin."
-                    }
-                }
+    steps {
+        script {
+            if (fileExists("${env.PROJECT_DIR}\\vendor\\bin\\phpunit")) {
+                bat "php \"${env.PROJECT_DIR}\\vendor\\bin\\phpunit\""
+            } else {
+                error "PHPUnit غير موجود. تأكد من أنه مثبت في ${env.PROJECT_DIR}\\vendor\\bin."
             }
         }
+    }
+}
+
         stage('Analyse Qualité de Code') {
             steps {
                 script {
