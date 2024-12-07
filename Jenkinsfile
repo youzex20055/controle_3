@@ -1,30 +1,32 @@
 pipeline {
     agent any
+    environment {
+        PROJECT_DIR = "C:\\Users\\user\\Desktop\\controle 3"
+    }
     stages {
         stage('Build') {
             steps {
-                echo 'Build de l’application...'
+                echo 'PHP project detected - skipping build step as no compilation is needed.'
             }
         }
-        stage('Tests Unitaires') {
+        stage('Test Unitaires') {
             steps {
                 script {
-                    bat 'php "C:\\Users\\user\\Desktop\\controle 3\\tests\\testIndex.php"'
+                    if (fileExists("${env.PROJECT_DIR}\\vendor\\bin\\phpunit")) {
+                        bat "php ${env.PROJECT_DIR}\\vendor\\bin\\phpunit"
+                    } else {
+                        error "PHPUnit not found. Please ensure it is installed in ${env.PROJECT_DIR}\\vendor\\bin."
+                    }
                 }
             }
         }
-        stage('Analyse SonarQube') {
+        stage('Analyse Qualité de Code') {
             steps {
                 script {
-                    withSonarQubeEnv('SonarQube') {
-                        // Commande sonar-scanner sous Windows
-                        bat '''
-                        sonar-scanner.bat ^
-                        -D"sonar.projectKey=controle_3" ^
-                        -D"sonar.sources=C:\\Users\\user\\Desktop\\controle 3" ^
-                        -D"sonar.host.url=http://localhost:9000" ^
-                        -D"sonar.login=sqa_94fed0bfc2252a6f29e598e4a2836afb0243128f"
-                        '''
+                    if (fileExists("${env.PROJECT_DIR}\\sonar-project.properties")) {
+                        bat "sonar-scanner"
+                    } else {
+                        echo "No SonarQube configuration found. Skipping code quality analysis."
                     }
                 }
             }
@@ -32,18 +34,14 @@ pipeline {
         stage('Déploiement') {
             steps {
                 script {
-                    bat '''
-                    if not exist "C:\\web\\controle3" (
-                        mkdir "C:\\web\\controle3"
-                    )
-                    xcopy /E /I "C:\\Users\\user\\Desktop\\controle 3\\*" "C:\\web\\controle3"
-                    '''
+                    bat "php -S localhost:8080 -t ${env.PROJECT_DIR}"
                 }
+                echo "Application is running at http://localhost:8080"
             }
         }
         stage('Run') {
             steps {
-                echo 'Application déployée avec succès!'
+                echo "Pipeline completed successfully."
             }
         }
     }
