@@ -24,7 +24,7 @@ pipeline {
         stage('Run Unit Tests') {
             steps {
                 echo 'Exécution des tests unitaires avec PHPUnit...'
-                sh './vendor/bin/phpunit tests/'
+                bat './vendor/bin/phpunit tests/'
             }
         }
 
@@ -32,7 +32,7 @@ pipeline {
             steps {
                 echo 'Analyse du code avec SonarQube...'
                 withSonarQubeEnv('SonarQube-Server') {
-                    sh """
+                    bat """
                     sonar-scanner \
                         -Dsonar.projectKey=cont3 \
                         -Dsonar.sources=src \
@@ -55,7 +55,7 @@ pipeline {
         stage('Deploy Application') {
             steps {
                 echo 'Déploiement de l\'application sur le serveur de production...'
-                sh 'rsync -avz src/ user@your-server:/var/www/html/mon-projet-php/'
+                bat 'rsync -avz src/ user@your-server:/var/www/html/mon-projet-php/'
             }
         }
 
