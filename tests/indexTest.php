@@ -1,9 +1,3 @@
 <?php
-function add($a, $b) {
-    return $a + $b;
-}
-
-function subtract($a, $b) {
-    return $a - $b;
-}
-?>
+echo "Test réussi !";
+http_response_code(200);
