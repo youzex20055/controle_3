@@ -17,7 +17,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 echo 'Installation des dépendances PHP avec Composer...'
-                sh 'composer install'
+                bat 'composer install'
             }
         }
 
